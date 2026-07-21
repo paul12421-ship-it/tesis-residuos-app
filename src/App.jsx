@@ -15,6 +15,8 @@ import "./App.css";
 function App() {
   const [distrito, setDistrito] = useState("");
   const [tipoPunto, setTipoPunto] = useState("");
+  const [codigoPCRR, setCodigoPCRR] = useState("");
+  const [registroExpandido, setRegistroExpandido] = useState(null);
 
   const [infraestructura, setInfraestructura] = useState("");
   const [estadoInfraestructura, setEstadoInfraestructura] = useState("");
@@ -395,6 +397,7 @@ const COLORS = [
 
   const nuevoRegistro = {
     distrito,
+    codigoPCRR,
     tipoPunto,
     infraestructura,
     estadoInfraestructura,
@@ -438,6 +441,7 @@ porcentajeValorizable,
 
   setDistrito("");
   setTipoPunto("");
+  setCodigoPCRR("");
 
   setInfraestructura("");
   setEstadoInfraestructura("");
@@ -481,36 +485,37 @@ const exportarPDF = (registro) => {
 
   doc.text(`Fecha: ${registro.fecha}`, 20, 40);
   doc.text(`Distrito: ${registro.distrito}`, 20, 50);
-  doc.text(`Tipo: ${registro.tipoPunto}`, 20, 60);
+  doc.text(`Código PCRR: ${registro.codigoPCRR || "Sin código"}`, 20, 60);
+  doc.text(`Tipo: ${registro.tipoPunto}`, 20, 70);
 
   doc.text(
     `Infraestructura: ${registro.infraestructura}`,
-    20,
-    70
-  );
-
-  doc.text(
-    `Estado: ${registro.estadoInfraestructura}`,
     20,
     80
   );
 
   doc.text(
-    `Impacto Visual: ${registro.impactoVisual}`,
+    `Estado: ${registro.estadoInfraestructura}`,
     20,
     90
   );
 
   doc.text(
-    `GPS: ${registro.latitud}, ${registro.longitud}`,
+    `Impacto Visual: ${registro.impactoVisual}`,
     20,
     100
   );
 
   doc.text(
-    `Observación: ${registro.observacion}`,
+    `GPS: ${registro.latitud}, ${registro.longitud}`,
     20,
     110
+  );
+
+  doc.text(
+    `Observación: ${registro.observacion}`,
+    20,
+    120
   );
   doc.text(
   `Señalización: ${registro.senalizacion}`,
@@ -591,6 +596,7 @@ const exportarExcel = () => {
 
   const datos = registros.map((r) => ({
     Fecha: r.fecha,
+    "Código PCRR": r.codigoPCRR,
     Distrito: r.distrito,
     Tipo: r.tipoPunto,
 
@@ -624,6 +630,7 @@ Recomendacion: r.recomendacionValorizacion,
   const hoja = XLSX.utils.json_to_sheet(datos);
   hoja["!cols"] = [
   { wch: 20 }, // Fecha
+  { wch: 18 }, // Código PCRR
   { wch: 18 }, // Distrito
   { wch: 18 }, // Tipo
   { wch: 18 }, // Infraestructura
@@ -766,24 +773,32 @@ XLSX.writeFile(libro, nombreArchivo);
         <h2>Información General</h2>
 
         <label>Distrito</label>
-        <select value={distrito} onChange={(e)=>setDistrito(e.target.value)}>
-          <option value="">Seleccione</option>
-          <option>Cusco</option>
-          <option>Santiago</option>
-          <option>Wanchaq</option>
-          <option>San Sebastián</option>
-          <option>San Jerónimo</option>
-        </select>
+        <select
+  value={distrito}
+  onChange={(e) => setDistrito(e.target.value)}
+>
+  <option value="">Seleccione</option>
+  <option>Cusco</option>
+  <option>Santiago</option>
+  <option>Wanchaq</option>
+  <option>San Sebastián</option>
+  <option>San Jerónimo</option>
+  <option>Saylla</option>
+  <option>Poroy</option>
+</select>
+<label>Código PCRR *</label>
 
+<input
+  type="text"
+  value={codigoPCRR}
+  onChange={(e) => setCodigoPCRR(e.target.value)}
+  placeholder="Ejemplo: SJ-139"
+/>
         <label>Tipo de Punto</label>
         <select value={tipoPunto} onChange={(e)=>setTipoPunto(e.target.value)}>
           <option value="">Seleccione</option>
-          <option>Mercado</option>
-          <option>Parque</option>
-          <option>Vía pública</option>
-          <option>Institución</option>
-          <option>Residencial</option>
-          <option>Otro</option>
+          <option>Mercado / Centro de abastos</option>
+          <option>Parque / Jardín</option>
         </select>
 
         <h2>🏗 Infraestructura</h2>
@@ -1290,12 +1305,36 @@ reader.readAsDataURL(archivo);
   .map((registro, index) => (
   <div key={index} className="registro-card">
 
-    <h3>Registro #{index + 1}</h3>
-    <p>
-    <strong>Fecha:</strong> {registro.fecha}
-    </p>
+    <div className="registro-header">
 
-    <p><strong>Distrito:</strong> {registro.distrito}</p>
+  <span className="numero-registro">
+    Ficha #{index + 1}
+  </span>
+
+  <h3 className="titulo-registro">
+    📍 {registro.codigoPCRR || "Sin código"}
+  </h3>
+
+</div>
+
+<div className="info-principal">
+
+  <div className="info-item">
+    <span className="info-label">🏙 Distrito</span>
+    <strong>{registro.distrito}</strong>
+  </div>
+
+  <div className="info-item">
+    <span className="info-label">🌳 Tipo</span>
+    <strong>{registro.tipoPunto}</strong>
+  </div>
+
+  <div className="info-item">
+    <span className="info-label">📅 Fecha</span>
+    <strong>{registro.fecha}</strong>
+  </div>
+
+</div>
     <div className="potencial-registro">
 
   <strong>♻ Potencial:</strong>
@@ -1309,6 +1348,20 @@ reader.readAsDataURL(archivo);
   {registro.recomendacionValorizacion}
 
 </p>
+<button
+  className="btn-detalles"
+  onClick={() =>
+    setRegistroExpandido(
+      registroExpandido === index ? null : index
+    )
+  }
+>
+  {registroExpandido === index
+    ? "▲ Ocultar detalles"
+    : "▼ Ver detalles"}
+</button>
+{registroExpandido === index && (
+<>
 
     <p><strong>Tipo:</strong> {registro.tipoPunto}</p>
 
@@ -1332,6 +1385,7 @@ reader.readAsDataURL(archivo);
     <p><strong>GPS:</strong> {registro.latitud}, {registro.longitud}</p>
 
     <p><strong>Observación:</strong> {registro.observacion}</p>
+
     {registro.fotoGeneral && (
   <img
     src={registro.fotoGeneral}
@@ -1354,6 +1408,9 @@ reader.readAsDataURL(archivo);
     alt="Contexto"
     className="foto-preview"
   />
+)}
+
+</>
 )}
 <div className="acciones-registro">
 <button
