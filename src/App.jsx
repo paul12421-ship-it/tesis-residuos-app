@@ -158,16 +158,16 @@ else {
 }
 
 const totalMercados = registros.filter(
-  r => r.tipoPunto === "Mercado"
+  r => r.tipoPunto?.includes("Mercado")
 ).length;
 
 const totalParques = registros.filter(
-  r => r.tipoPunto === "Parque"
+  r => r.tipoPunto?.includes("Parque")
 ).length;
 const tipoPredominante =
   totalMercados >= totalParques
-    ? "🏪 Mercado"
-    : "🌳 Parque";
+    ? "🛒 Mercado / Centro de abastos"
+    : "🌳 Parque / Jardín";
 
 const infraestructuraSi = registros.filter(
   r => r.infraestructura === "Sí"
