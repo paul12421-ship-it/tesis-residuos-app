@@ -775,7 +775,25 @@ XLSX.writeFile(libro, nombreArchivo);
         <label>Distrito</label>
         <select
   value={distrito}
-  onChange={(e) => setDistrito(e.target.value)}
+  onChange={(e) => {
+
+    const nuevoDistrito = e.target.value;
+
+    setDistrito(nuevoDistrito);
+
+    const prefijos = {
+      "Cusco": "CU-",
+      "San Sebastián": "SS-",
+      "Santiago": "ST-",
+      "San Jerónimo": "SJ-",
+      "Poroy": "PO-",
+      "Wanchaq": "W-",
+      "Saylla": "SA-"
+    };
+
+    setCodigoPCRR(prefijos[nuevoDistrito] || "");
+
+  }}
 >
   <option value="">Seleccione</option>
   <option>Cusco</option>
@@ -786,21 +804,27 @@ XLSX.writeFile(libro, nombreArchivo);
   <option>Saylla</option>
   <option>Poroy</option>
 </select>
+
 <label>Código PCRR *</label>
 
 <input
   type="text"
   value={codigoPCRR}
   onChange={(e) => setCodigoPCRR(e.target.value)}
-  placeholder="Ejemplo: SJ-139"
+  placeholder="Ej.: CU-001"
 />
-        <label>Tipo de Punto</label>
-        <select value={tipoPunto} onChange={(e)=>setTipoPunto(e.target.value)}>
-          <option value="">Seleccione</option>
-          <option>Mercado / Centro de abastos</option>
-          <option>Parque / Jardín</option>
-        </select>
 
+
+<label>Tipo de punto *</label>
+
+<select
+  value={tipoPunto}
+  onChange={(e) => setTipoPunto(e.target.value)}
+>
+  <option value="">Seleccione</option>
+  <option>Mercado / Centro de abastos</option>
+  <option>Parque / Jardín</option>
+</select>
         <h2>🏗 Infraestructura</h2>
 
         <label>Existe infraestructura</label>
