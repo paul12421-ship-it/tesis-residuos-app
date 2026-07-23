@@ -287,4 +287,216 @@ border-bottom:2px solid #edf4ef;
     margin-top:30px;
     flex-wrap:wrap;
 }
+/* ===== FICHA TÉCNICA ===== */
+
+.ficha-tecnica{
+    background:#f8fafc;
+    border:1px solid #dbe4ea;
+    border-radius:14px;
+    padding:16px;
+    margin:15px 0;
+}
+
+.titulo-ficha{
+    margin:0 0 15px 0;
+    color:#1f2937;
+    font-size:18px;
+    font-weight:700;
+}
+
+.fila-ficha{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:12px 0;
+
+    border-bottom:1px solid #e5e7eb;
+}
+
+.fila-ficha:last-child{
+    border-bottom:none;
+}
+
+.etiqueta{
+    font-weight:600;
+    color:#475569;
+}
+
+.valor{
+    font-weight:700;
+    color:#111827;
+}
+/* ===== COMPOSICIÓN ===== */
+
+.composicion-card{
+    background: #ffffff;
+    border: 1px solid #dbe4ea;
+    border-radius: 14px;
+    padding: 20px;
+    margin: 18px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+
+.composicion-card h4{
+    text-align:center;
+    margin-bottom:15px;
+    color:#1f2937;
+}
+/* ===== LEYENDA DEL GRÁFICO ===== */
+
+.leyenda-residuos{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px 25px;
+
+    margin-top:20px;
+    font-size:15px;
+    font-weight:600;
+}
+
+.leyenda-residuos div{
+    display:flex;
+    align-items:center;
+}
+
+.color{
+    width:14px;
+    height:14px;
+
+    border-radius:50%;
+
+    margin-right:10px;
+
+    flex-shrink:0;
+}
+
+.color-organicos{
+    background:#4CAF50;
+}
+
+.color-plasticos{
+    background:#2196F3;
+}
+
+.color-papel{
+    background:#FFC107;
+}
+
+.color-vidrio{
+    background:#9C27B0;
+}
+
+.color-metales{
+    background:#FF5722;
+}
+
+.color-otros{
+    background:#9E9E9E;
+}
+/*=============================
+      OBSERVACIÓN DE CAMPO
+==============================*/
+
+.observacion-card{
+
+    background:#ffffff;
+
+    border:1px solid #dbe4ea;
+
+    border-radius:14px;
+
+    padding:20px;
+
+    margin-top:20px;
+
+    box-shadow:0 2px 8px rgba(0,0,0,.05);
+
+}
+
+.nota-campo{
+
+    background:#f8fafc;
+
+    border-left:6px solid #2f855a;
+
+    border-radius:12px;
+
+    padding:18px;
+
+}
+
+.nota-etiqueta{
+
+    display:inline-block;
+
+    background:#2f855a;
+
+    color:white;
+
+    padding:4px 10px;
+
+    border-radius:30px;
+
+    font-size:12px;
+
+    font-weight:700;
+
+    margin-bottom:12px;
+
+}
+
+.texto-observacion{
+
+    margin:0;
+
+    color:#374151;
+
+    line-height:1.7;
+
+    white-space:pre-wrap;
+
+    text-align:justify;
+
+    font-size:15px;
+
+}
+/*==========================
+      POTENCIAL DINÁMICO
+==========================*/
+
+.potencial-registro{
+
+    width:100%;
+
+    padding:16px;
+
+    border-radius:14px;
+
+    text-align:center;
+
+    font-size:22px;
+
+    font-weight:700;
+
+    margin:18px 0;
+
+    transition:all .3s ease;
+
+}
+
+.potencial-alto{
+    background: lime !important;
+    color:black !important;
+}
+
+.potencial-medio{
+    background: yellow !important;
+    color: black !important;
+}
+
+.potencial-bajo{
+    background:rgb(156, 165, 163) !important;
+    color:white !important;
+}
 

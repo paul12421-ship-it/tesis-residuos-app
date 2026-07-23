@@ -1,16 +1,20 @@
+
+
+import { jsPDF } from "jspdf";
+import * as XLSX from "xlsx";
+import { useState, useEffect } from "react";
+
 import {
   PieChart,
   Pie,
   Cell,
   Tooltip,
   Legend,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from "recharts";
 
-import { jsPDF } from "jspdf";
-import * as XLSX from "xlsx";
-import { useState, useEffect } from "react";
 import "./App.css";
+import PieResiduos from "./PieResiduos";
 
 function App() {
   const [distrito, setDistrito] = useState("");
@@ -92,6 +96,58 @@ useEffect(() => {
     JSON.stringify(registros)
   );
 }, [registros]);
+
+// 👇 PEGA AQUÍ LA FUNCIÓN
+
+const comprimirImagen = (archivo) => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      const img = new Image();
+
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+
+        const MAX_WIDTH = 1200;
+        const MAX_HEIGHT = 1200;
+
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const imagenComprimida = canvas.toDataURL(
+          "image/jpeg",
+          0.7
+        );
+
+        resolve(imagenComprimida);
+      };
+
+      img.src = e.target.result;
+    };
+
+    reader.readAsDataURL(archivo);
+  });
+};
+
   const total =
     Number(organicos) +
     Number(plasticos) +
@@ -984,21 +1040,15 @@ reader.readAsDataURL(archivo);
 
 <label>Foto Contexto</label>
 
-<input
-  type="file"
-  accept="image/*"
-  onChange={(e) => {
-    const archivo = e.target.files[0];
+onChange={async (e) => {
+  const archivo = e.target.files[0];
 
-const reader = new FileReader();
+  if (!archivo) return;
 
-reader.onloadend = () => {
-  setFotoContexto(reader.result);
-};
+  const imagen = await comprimirImagen(archivo);
 
-reader.readAsDataURL(archivo);
-  }}
-/>
+  setFotoGeneral(imagen);
+}}
 
         <textarea
           rows="5"
@@ -1359,11 +1409,27 @@ reader.readAsDataURL(archivo);
   </div>
 
 </div>
-    <div className="potencial-registro">
+    <div
+  className={`potencial-registro ${
+    
+    
+   registro.potencialValorizacion?.trim().toLowerCase() === "alto"
+  ? "potencial-alto"
+  : registro.potencialValorizacion?.trim().toLowerCase() === "medio"
+  ? "potencial-medio"
+  : "potencial-bajo"
+  }`}
+>
 
-  <strong>♻ Potencial:</strong>
+  <strong>
+    {registro.potencialValorizacion?.trim().toLowerCase() === "alto" && "🟢"}
 
-  <span>{registro.potencialValorizacion}</span>
+{registro.potencialValorizacion?.trim().toLowerCase() === "medio" && "🟡"}
+
+{registro.potencialValorizacion?.trim().toLowerCase() === "bajo" && "🔴"}
+   
+    {" "}POTENCIAL {registro.potencialValorizacion.toUpperCase()}
+  </strong>
 
 </div>
 
@@ -1387,28 +1453,54 @@ reader.readAsDataURL(archivo);
 {registroExpandido === index && (
 <>
 
-    <p><strong>Tipo:</strong> {registro.tipoPunto}</p>
+    <div className="ficha-tecnica">
 
-    <p><strong>Infraestructura:</strong> {registro.infraestructura}</p>
+  <h4 className="titulo-ficha">📋 Información General</h4>
 
-    <p><strong>Estado:</strong> {registro.estadoInfraestructura}</p>
+  <div className="fila-ficha">
+    <span className="etiqueta">🏪 Tipo</span>
+    <span className="valor">{registro.tipoPunto}</span>
+  </div>
 
-    <p><strong>Impacto Visual:</strong> {registro.impactoVisual}</p>
-    <p><strong>Orgánicos:</strong> {registro.organicos}%</p>
+  <div className="fila-ficha">
+    <span className="etiqueta">🟢 Infraestructura</span>
+    <span className="valor">{registro.infraestructura}</span>
+  </div>
 
-    <p><strong>Plásticos:</strong> {registro.plasticos}%</p>
+  <div className="fila-ficha">
+    <span className="etiqueta">⭐ Estado</span>
+    <span className="valor">{registro.estadoInfraestructura}</span>
+  </div>
 
-    <p><strong>Papel:</strong> {registro.papel}%</p>
+  <div className="fila-ficha">
+    <span className="etiqueta">🟡 Impacto Visual</span>
+    <span className="valor">{registro.impactoVisual}</span>
+  </div>
 
-    <p><strong>Vidrio:</strong> {registro.vidrio}%</p>
-
-    <p><strong>Metales:</strong> {registro.metales}%</p>
-
-    <p><strong>Otros:</strong> {registro.otros}%</p>
+</div>
+    <PieResiduos registro={registro} />
 
     <p><strong>GPS:</strong> {registro.latitud}, {registro.longitud}</p>
 
-    <p><strong>Observación:</strong> {registro.observacion}</p>
+    <div className="observacion-card">
+
+    <h4 className="titulo-ficha">
+        📝 Observación de Campo
+    </h4>
+
+    <div className="nota-campo">
+
+        <div className="nota-etiqueta">
+            Registro del inspector
+        </div>
+
+        <p className="texto-observacion">
+            {registro.observacion || "No se registraron observaciones."}
+        </p>
+
+    </div>
+
+</div>
 
     {registro.fotoGeneral && (
   <img
